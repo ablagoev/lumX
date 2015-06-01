@@ -3,6 +3,15 @@
 
 
 angular.module('lumx.select', [])
+    .filter('filterChoices', ['$filter', function($filter) {
+      return function(choices, expression, comparator) {
+        if (!angular.isArray(choices)) {
+          return choices;
+        }
+
+        return $filter('filter')(choices, expression, comparator);
+      };
+    }])
     .controller('LxSelectController', ['$scope', '$compile', '$filter', '$interpolate', '$sce', '$timeout',
                                        function($scope, $compile, $filter, $interpolate, $sce, $timeout)
     {
@@ -101,7 +110,7 @@ angular.module('lumx.select', [])
 
         function hasNoResults()
         {
-            return angular.isUndefined($scope.choices()) || $filter('filter')($scope.choices(), $scope.data.filter).length === 0;
+            return angular.isUndefined($scope.choices()) || $filter('filterChoices')($scope.choices(), $scope.data.filter).length === 0;
         }
 
         function filterNeeded()
